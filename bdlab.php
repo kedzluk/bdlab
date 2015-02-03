@@ -84,6 +84,7 @@ function passed()
         while ($row = mysqli_fetch_assoc($result))
         {
             echo "<li>";
+            echo $row["name"];
             echo "</li>";
         }
         echo "</ul>";
@@ -240,7 +241,8 @@ function technologies()
     global $current_user;
     global $wpdb;
     $sql = "SELECT * FROM technologies WHERE userid=";
-    $sql .= "(SELECT identifier FROM ".($wpdb->prefix)."wslusersprofiles WHERE user_id=".$current_user->id.")";
+    $numerek .= "(SELECT identifier FROM ".($wpdb->prefix)."wslusersprofiles WHERE user_id=".$current_user->id.")";
+    $sql .= $numerek;
  
     $result = mysqli_query($conn, $sql);
 
@@ -260,7 +262,21 @@ function technologies()
     {
         echo "Brak technologii</br>";
     }
+    
+    $res2 = mysqli_query($conn, $numerek);
+    $num = mysqli_fetch_assoc($res2);
+
     mysqli_close($conn);
+
+    echo 'Dodaj technologie:</br>
+        <form method="get" action="wp-content/plugins/addtech.php">
+        Nazwa: <input type="text" name="name"></br>
+        Doswiadczenie: <input type="text" name="experience"></br>
+        Probka: <input type="text" name="link"></br>
+        <input type="hidden" name="userid" value="'.$num["identifier"].'">
+        <input type="submit" name="button">
+        </form>
+        ';
 }
 
 // 7.
@@ -283,7 +299,6 @@ function prizes()
     global $wpdb;
     $sql = "SELECT * FROM prizes WHERE userid=";
     $sql .= "(SELECT identifier FROM ".($wpdb->prefix)."wslusersprofiles WHERE user_id=".$current_user->id.")";
- 
     $result = mysqli_query($conn, $sql);
 
     echo "Nagrody:</br>";
